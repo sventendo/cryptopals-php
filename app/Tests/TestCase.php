@@ -1,6 +1,6 @@
 <?php
 
-namespace Sventendo\Cryptopals;
+namespace Sventendo\Cryptopals\Tests;
 
 use Illuminate\Container\Container;
 

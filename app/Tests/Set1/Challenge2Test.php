@@ -3,7 +3,7 @@
 namespace Sventendo\Cryptopals\Tests\Set1;
 
 use Sventendo\Cryptopals\Set1\Challenge2;
-use Sventendo\Cryptopals\TestCase;
+use Sventendo\Cryptopals\Tests\TestCase;
 
 class Challenge2Test extends TestCase
 {
