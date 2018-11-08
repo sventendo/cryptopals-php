@@ -12,5 +12,8 @@
         "psr-4": {
             "Sventendo\\Cryptopals\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": { "Sventendo\\Cryptopals\\Tests\\": "Tests/" }
     }
 }

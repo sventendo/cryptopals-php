@@ -2,6 +2,9 @@
 
 namespace Sventendo\Cryptopals\Service;
 
+use Sventendo\Cryptopals\Exceptions\InvalidLetterException;
+use Sventendo\Cryptopals\ValueTypes\HexDouble;
+
 class XorService
 {
     /**
@@ -45,7 +48,7 @@ class XorService
         return $this->conversionService->decToHex($output);
     }
 
-    public function findXorModifier(string $input, string $output)
+    public function findXorModifier(HexDouble $input, HexDouble $output)
     {
         $inputValue = $this->conversionService->hexDoubleToDec($input);
         $outputValue = $this->conversionService->hexDoubleToDec($output);
@@ -57,13 +60,37 @@ class XorService
         return $modifier;
     }
 
-    public function xorHexDouble(string $inputHexDouble, string $modifierHexDouble)
+    public function xorHexDoubleWithHexDouble(HexDouble $input, HexDouble $modifierHexDouble)
     {
-        $inputValue = $this->conversionService->hexDoubleToDec($inputHexDouble);
         $modifierValue = $this->conversionService->hexDoubleToDec($modifierHexDouble);
+
+        return $this->xorHexDoubleWithValue($input, $modifierValue);
+    }
+
+    public function xorHexDoubleWithValue(HexDouble $input, int $modifierValue)
+    {
+        $inputValue = $this->conversionService->hexDoubleToDec($input);
 
         $output = $inputValue ^ $modifierValue;
 
         return $this->conversionService->decToHexDouble($output);
+    }
+
+    public function xorString(string $input, int $modifierValue)
+    {
+        $message = '';
+
+        foreach (str_split($input, 2) as $index => $chunk) {
+            $hexDouble = new HexDouble($chunk);
+            $hexDoubleDecrypted = $this->xorHexDoubleWithValue($hexDouble, $modifierValue);
+            try {
+                $this->conversionService->sanitizeHexDouble($hexDoubleDecrypted);
+            } catch (InvalidLetterException $e) {
+                return '';
+            }
+            $message .= $this->conversionService->hexDoubleToAscii($hexDoubleDecrypted);
+        }
+
+        return $message;
     }
 }

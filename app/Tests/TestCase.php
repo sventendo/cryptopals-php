@@ -11,9 +11,9 @@ class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected $container;
 
-    public function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::__construct();
         $this->container = new Container();
+        parent::__construct($name, $data, $dataName);
     }
 }

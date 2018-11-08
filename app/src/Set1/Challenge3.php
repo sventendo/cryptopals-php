@@ -5,6 +5,7 @@ namespace Sventendo\Cryptopals\Set1;
 use Sventendo\Cryptopals\Exceptions\InvalidLetterException;
 use Sventendo\Cryptopals\Service\ConversionService;
 use Sventendo\Cryptopals\Service\XorService;
+use Sventendo\Cryptopals\ValueTypes\HexDouble;
 
 class Challenge3
 {
@@ -58,7 +59,7 @@ class Challenge3
     {
         foreach ($this->possibleMatches as $match) {
             $encodedLetter = $this->conversionService->decToHexDouble(ord($match[1]));
-            $modifier = $this->xorService->findXorModifier($match[0], $encodedLetter);
+            $modifier = $this->xorService->findXorModifier(new HexDouble($match[0]), $encodedLetter);
             try {
                 $this->decryptedCandidates[] = $this->decrypt($modifier);
             } catch (InvalidLetterException $e) {
@@ -72,20 +73,20 @@ class Challenge3
     {
         $message = '';
 
-        $inputLength = strlen($this->challengeInput);
         $modifierAsHex = $this->conversionService->decToHexDouble($modifier);
-        for ($i = 0; $i < $inputLength / 2; $i++) {
-            $inputHexValue = substr($this->challengeInput, $i * 2, 2);
-            $message .= $this->decryptLetter($inputHexValue, $modifierAsHex);
+
+        foreach (str_split($this->challengeInput, 2) as $hexDoubleString) {
+            $doubleHex = new HexDouble($hexDoubleString);
+            $message .= $this->decryptLetter($doubleHex, $modifierAsHex);
         }
 
         return $message;
     }
 
-    private function decryptLetter(string $inputHexDouble, string $modifierHexDouble, bool $sanitize = true): string
+    private function decryptLetter(HexDouble $input, HexDouble $modifierHexDouble, bool $sanitize = true): string
     {
         $letter = chr($this->conversionService->hexDoubleToDec(
-            $this->xorService->xorHexDouble($inputHexDouble, $modifierHexDouble)
+            $this->xorService->xorHexDoubleWithHexDouble($input, $modifierHexDouble)
         ));
 
         if ($sanitize) {

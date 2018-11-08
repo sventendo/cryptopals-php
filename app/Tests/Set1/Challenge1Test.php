@@ -19,17 +19,17 @@ class Challenge1Test extends TestCase
     }
 
     /**
+     * @dataProvider encryptExamples
      * @param string $hex
      * @param string $base64
-     *
-     * @dataProvider examples
+     * @throws \Exception
      */
     public function testHexToBase64(string $hex, string $base64)
     {
         $this->assertEquals($base64, $this->subject->hexToBase64($hex));
     }
 
-    public function examples()
+    public function encryptExamples(): array
     {
         return [
             [
