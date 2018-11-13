@@ -23,8 +23,7 @@ class Challenge4Test extends TestCase
     public function testDecryptAllAsIs()
     {
         $this->subject->readChallengeInput();
-        $output = $this->subject->execute();
 
-        var_dump($output);
+        echo $this->subject->execute();
     }
 }

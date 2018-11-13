@@ -2,7 +2,7 @@
 
 namespace Sventendo\Cryptopals\Service;
 
-use Sventendo\Cryptopals\TestCase;
+use Sventendo\Cryptopals\Tests\TestCase;
 
 class XorServiceTest extends TestCase
 {
@@ -43,5 +43,14 @@ class XorServiceTest extends TestCase
         $output = '746865206b696420646f6e277420706c6179';
 
         $this->assertEquals($output, $this->subject->xor($input, $modifier));
+    }
+
+    public function testXorRepeat()
+    {
+        $input = '123abc';
+        $modifier = 'def';
+        $output = '555755050705';
+
+        $this->assertEquals($output, $this->subject->xorStringRepeat($input, $modifier));
     }
 }

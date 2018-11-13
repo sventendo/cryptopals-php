@@ -93,4 +93,19 @@ class XorService
 
         return $message;
     }
+
+    public function xorStringRepeat(string $input, string $modifierString)
+    {
+        $message = '';
+
+        $modifierLength = strlen($modifierString);
+
+        foreach (str_split($input) as $index => $chunk) {
+            $chunkValue = ord($chunk);
+            $modifierValue = ord($modifierString[$index % $modifierLength]);
+            $message .= $this->conversionService->decToHexDouble($chunkValue ^ $modifierValue)->__toString();
+        }
+
+        return $message;
+    }
 }
