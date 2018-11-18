@@ -78,4 +78,30 @@ class ConversionService
             throw new InvalidLetterException('Letter "' . $letter . '" is not in the list of valid letters.');
         }
     }
+
+    public function hexToBase64(string $hex): string
+    {
+        $base64 = '';
+
+        if (strlen($hex) & 1) {
+            throw new \Exception('Invalid string length.');
+        }
+
+        $buffer = 0;
+        $bufferSize = 0;
+
+        for ($i = 0; $i < strlen($hex); $i++) {
+            $character = $hex[$i];
+            $decValue = $this->hexToDec($character);
+            $bufferSize += 4;
+            $buffer = ($buffer << 4) | $decValue;
+
+            if ($bufferSize >= 6) {
+                $bufferSize -= 6;
+                $base64 .= $this->base64Character(($buffer >> $bufferSize) & 63);
+            }
+        }
+
+        return $base64;
+    }
 }

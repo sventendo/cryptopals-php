@@ -26,7 +26,7 @@ class Challenge1Test extends TestCase
      */
     public function testHexToBase64(string $hex, string $base64)
     {
-        $this->assertEquals($base64, $this->subject->hexToBase64($hex));
+        $this->assertEquals($base64, $this->subject->execute($hex));
     }
 
     public function encryptExamples(): array
