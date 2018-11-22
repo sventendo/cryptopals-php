@@ -2,7 +2,6 @@
 
 namespace Sventendo\Cryptopals\Set1;
 
-use Sventendo\Cryptopals\Exceptions\InvalidLetterException;
 use Sventendo\Cryptopals\Service\ConversionService;
 use Sventendo\Cryptopals\Service\DecryptionService;
 use Sventendo\Cryptopals\Service\XorService;

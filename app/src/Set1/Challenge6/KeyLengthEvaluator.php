@@ -2,7 +2,6 @@
 
 namespace Sventendo\Cryptopals\Set1\Challenge6;
 
-use Sventendo\Cryptopals\Exceptions\InvalidStringLengthException;
 use Sventendo\Cryptopals\Service\DecryptionService;
 
 class KeyLengthEvaluator
