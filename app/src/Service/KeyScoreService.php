@@ -25,7 +25,6 @@ class KeyScoreService
 
     public function getKeyLength()
     {
-        return 29;
         $this->calculateCandidates();
 
         return $this->keyLength;
