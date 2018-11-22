@@ -2,7 +2,6 @@
 
 namespace Sventendo\Cryptopals\Service;
 
-use Sventendo\Cryptopals\Exceptions\InvalidStringLengthException;
 use Sventendo\Cryptopals\ValueTypes\HexDouble;
 
 class KeyScoreService
