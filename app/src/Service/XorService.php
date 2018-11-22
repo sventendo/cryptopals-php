@@ -3,6 +3,7 @@
 namespace Sventendo\Cryptopals\Service;
 
 use Sventendo\Cryptopals\Exceptions\InvalidLetterException;
+use Sventendo\Cryptopals\Set1\Challenge6\Message;
 use Sventendo\Cryptopals\ValueTypes\HexDouble;
 
 class XorService
@@ -90,6 +91,32 @@ class XorService
             }
             $message .= $this->conversionService->hexDoubleToAscii($hexDoubleDecrypted);
         }
+
+        return $message;
+    }
+
+    public function xorStringToMessage(string $input, int $modifierValue): Message
+    {
+        $message = new Message();
+        $message->setModifierValue($modifierValue);
+        $hitRate = 0;
+
+        foreach (str_split($input, 2) as $index => $chunk) {
+            if (strlen($chunk) === 1) {
+                $chunk .= '0';
+            }
+            $hexDouble = new HexDouble($chunk);
+            $hexDoubleDecrypted = $this->xorHexDoubleWithValue($hexDouble, $modifierValue);
+            $hitRate++;
+            try {
+                $this->conversionService->sanitizeHexDouble($hexDoubleDecrypted);
+            } catch (InvalidLetterException $e) {
+                $hitRate--;
+            }
+            $message->addText($this->conversionService->hexDoubleToAscii($hexDoubleDecrypted));
+        }
+
+        $message->setHitRate($hitRate / (strlen($input) / 2));
 
         return $message;
     }

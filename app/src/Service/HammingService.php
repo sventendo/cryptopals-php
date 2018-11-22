@@ -5,9 +5,11 @@ namespace Sventendo\Cryptopals\Service;
 use Sventendo\Cryptopals\Exceptions\InvalidHexValueException;
 use Sventendo\Cryptopals\Exceptions\InvalidLetterException;
 use Sventendo\Cryptopals\Exceptions\InvalidStringLengthException;
+use Sventendo\Cryptopals\ValueTypes\HexDouble;
 
 class HammingService
 {
+    // @formatter:off
     private $bitMap256 = [
         0, 1,
 
@@ -100,6 +102,18 @@ class HammingService
         5, 6, 6, 7,
         6, 7, 7, 8
     ];
+    // @formatter:on
+
+    /**
+     * @var ConversionService
+     */
+    private $conversionService;
+
+    public function __construct(
+        ConversionService $conversionService
+    ) {
+        $this->conversionService = $conversionService;
+    }
 
     public function getDistance(string $from, string $to): int
     {
@@ -130,6 +144,15 @@ class HammingService
         }
 
         return $distance;
+    }
+
+    public function getHexDoubleDistance(HexDouble $from, HexDouble $to): int
+    {
+        $fromValue = $this->conversionService->hexDoubleToDec($from);
+        $toValue = $this->conversionService->hexDoubleToDec($to);
+        $differingValue = $fromValue ^ $toValue;
+
+        return $this->countSetBits($differingValue);
     }
 
     private function countSetBits(int $differingValue)

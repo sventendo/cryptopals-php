@@ -4,6 +4,7 @@ namespace Sventendo\Cryptopals\Set1;
 
 use Sventendo\Cryptopals\Exceptions\InvalidLetterException;
 use Sventendo\Cryptopals\Service\ConversionService;
+use Sventendo\Cryptopals\Service\DecryptionService;
 use Sventendo\Cryptopals\Service\XorService;
 
 class Challenge4
@@ -20,13 +21,19 @@ class Challenge4
      * @var XorService
      */
     private $xorService;
+    /**
+     * @var DecryptionService
+     */
+    private $decryptionService;
 
     public function __construct(
         ConversionService $conversionService,
-        XorService $xorService
+        XorService $xorService,
+        DecryptionService $decryptionService
     ) {
         $this->conversionService = $conversionService;
         $this->xorService = $xorService;
+        $this->decryptionService = $decryptionService;
     }
 
     public function readChallengeInput()
@@ -39,7 +46,7 @@ class Challenge4
         $output = [];
 
         foreach ($this->input as $row) {
-            $messages = $this->getSensibleDecryptedStrings($row);
+            $messages = $this->decryptionService->getSensibleDecryptedStrings($row);
             if (\count($messages)) {
                 $output[] = $messages;
             }
@@ -48,17 +55,4 @@ class Challenge4
         return $output;
     }
 
-    private function getSensibleDecryptedStrings($row): array
-    {
-        $messages = [];
-        for ($i = 0; $i < 256; $i++) {
-
-            $message = $this->xorService->xorString($row, $i);
-            if ($message !== '') {
-                $messages[] = $message;
-            }
-        }
-
-        return $messages;
-    }
 }

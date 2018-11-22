@@ -9,7 +9,7 @@ use Sventendo\Cryptopals\ValueTypes\HexDouble;
 
 class ConversionService
 {
-    const VALID_CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\ !?;,.-_()[]{}\'"';
+    const VALID_CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\ !?;,.-_()[]\'"';
     /**
      * @var string
      */
@@ -19,29 +19,6 @@ class ConversionService
      */
     private $base64Map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-    public function base64Character(int $value): string
-    {
-        return $this->base64Map[$value];
-    }
-
-    public function decToHexDouble(int $value): HexDouble
-    {
-        if ($value > 255) {
-            throw new InvalidHexValueException($value . ' is not a valid double hex value.');
-        }
-
-        return new HexDouble($this->decToHex((int)floor($value / 16)) . $this->decToHex($value % 16));
-    }
-
-    public function decToHex(int $value): string
-    {
-        if ($value >= strlen($this->hexMap)) {
-            throw new InvalidHexValueException($value . ' is not a valid hex value.');
-        }
-
-        return $this->hexMap[$value];
-    }
-
     public function hexDoubleStringToAscii(string $input)
     {
         if (strlen($input) % 2 !== 0) {
@@ -50,8 +27,8 @@ class ConversionService
 
         $output = '';
 
-        foreach (str_split($input, 2) as $hexDouble) {
-            $output .= $this->hexDoubleToAscii($hexDouble);
+        foreach (str_split($input, 2) as $hexDoubleValue) {
+            $output .= $this->hexDoubleToAscii(new HexDouble($hexDoubleValue));
         }
 
         return $output;
@@ -59,7 +36,9 @@ class ConversionService
 
     public function hexDoubleToAscii(HexDouble $input)
     {
-        return chr($this->hexDoubleToDec($input));
+        $dec = $this->hexDoubleToDec($input);
+
+        return chr($dec);
     }
 
     public function hexDoubleToDec(HexDouble $input): int
@@ -67,7 +46,8 @@ class ConversionService
         return $this->hexToDec($input->getCharacter(0)) * 16 + $this->hexToDec($input->getCharacter(1));
     }
 
-    public function hexToDec(string $character): int {
+    public function hexToDec(string $character): int
+    {
         return strpos($this->hexMap, strtolower($character));
     }
 
@@ -103,5 +83,63 @@ class ConversionService
         }
 
         return $base64;
+    }
+
+    public function base64Character(int $value): string
+    {
+        return $this->base64Map[$value];
+    }
+
+    public function base64ToHex(string $base64): string
+    {
+        $hex = '';
+
+        $base64 = rtrim($base64, '=');
+
+        $buffer = 0;
+        $bufferSize = 0;
+
+        for ($i = 0; $i < strlen($base64); $i++) {
+            $character = $base64[$i];
+            $decValue = $this->base64ToDec($character);
+            $bufferSize += 6;
+            $buffer = ($buffer << 6) | $decValue;
+
+            while ($bufferSize >= 8) {
+                $bufferSize -= 8;
+                $hex .= $this->decToHexDouble(($buffer >> $bufferSize) & 255);
+            }
+        }
+
+        return $hex;
+    }
+
+    private function base64ToDec(string $character): int
+    {
+        $value = strpos($this->base64Map, $character);
+
+        if ($value === false) {
+            throw new InvalidLetterException($character . ' is not a valid base64 value.');
+        }
+
+        return $value;
+    }
+
+    public function decToHexDouble(int $value): HexDouble
+    {
+        if ($value > 255) {
+            throw new InvalidHexValueException($value . ' is not a valid double hex value.');
+        }
+
+        return new HexDouble($this->decToHex((int)floor($value / 16)) . $this->decToHex($value % 16));
+    }
+
+    public function decToHex(int $value): string
+    {
+        if ($value >= strlen($this->hexMap)) {
+            throw new InvalidHexValueException($value . ' is not a valid hex value.');
+        }
+
+        return $this->hexMap[$value];
     }
 }
